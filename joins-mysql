@@ -1,0 +1,444 @@
+Joins:
+Relational Database:
+Foreign key
+
+
+orders 
+orderNumber
+date
+required
+shippingdate
+status
+comments
+MobileNo
+
+
+OrderDetails
+OrderNumber
+productCode
+No of items
+Pricing
+Order Marking
+
+
+
+A  join is method of linking the data between one or more than one table based on the values of the common columns b/w 2 tables.
+1.inner Joins
+2.Left Joins
+3.Right Joins
+4.Cross Joins
+
+Full Outer Join
+
+
+Members and committes
+
+
+inner join clause
+join predicate
+
+it compare each row from table1 with every row in table 2 .
+inner joins contains only matching rows from both the table.
+
+Syntax: 
+select column_list from table1 inner join table2 on  condition
+
+
+
+Left Join:
+Two table 
+left join clause will create a new row in left table add all the data where right will be keep it as NULL.
+
+left join select all the data from the left table doesnt matter if matching row is there or not in table2.
+
+it make table 2 as NULL:
+
+Syntax:
+select column_list from table1 left join table2 on join_condtion;
+
+
+using clause  for checking the matching in both tables
+
+
+Get the members who are not committe members.
+
+
+RIght join
+The right join is exactly the same as left join except things
+are reversed
+
+data selection will be done from the right table instead of left
+
+
+it select all rows from the right table and match it with left
+if a row from the right table doesnt match with left ,
+resp. columns will be taken as NULL in a record
+
+syntax:
+select columnlist from table1 right join table2 on condtion;
+
+cross Join:
+
+Cartesian product
+join condition.
+
+
+It joins the each row from first table with every row from
+the right table and give you final result.
+
+m1 rows 
+n1 columns
+
+
+m1*n1
+
+synt:
+select columnslist from table1 cross join table2;
+
+Sales planning 
+
+
+cross join 
+
+customer,
+product and Price 
+
+
+
+
+Microsoft Windows [Version 10.0.19044.1586]
+(c) Microsoft Corporation. All rights reserved.
+
+C:\Users\hp>mysql -u root -p
+Enter password: ****
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 10
+Server version: 8.0.28 MySQL Community Server - GPL
+
+Copyright (c) 2000, 2022, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> create database joindb;
+Query OK, 1 row affected (0.02 sec)
+
+mysql> use joindb;
+Database changed
+mysql> create table members(
+    -> member_id int auto_increment,
+    -> name varchar(100),
+    -> primary key (member_id)
+    -> );
+Query OK, 0 rows affected (0.09 sec)
+
+mysql> create table committees(
+    -> committees_id int auto_increment,
+    -> name varchar(100),
+    -> primary key(member_id)
+    -> );
+ERROR 1072 (42000): Key column 'member_id' doesn't exist in table
+mysql> create table committees(
+    -> committees_id int auto_increment,
+    -> name varchar(100),
+    -> primary key(committees_id)
+    -> );
+Query OK, 0 rows affected (0.05 sec)
+
+mysql> show tables;
++------------------+
+| Tables_in_joindb |
++------------------+
+| committees       |
+| members          |
++------------------+
+2 rows in set (0.00 sec)
+
+mysql> insert into members(name) values('john'),('jane'),('mary'),('david'),('jacky);
+    '> );
+    '> ^C
+mysql> insert into members(name) values('john'),('jane'),('mary'),('david'),('jacky');
+Query OK, 5 rows affected (0.02 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> insert into committees(name) values('john'),('mary'),('jacky'),('joe');
+Query OK, 4 rows affected (0.02 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+
+mysql> select * from members;
++-----------+-------+
+| member_id | name  |
++-----------+-------+
+|         1 | john  |
+|         2 | jane  |
+|         3 | mary  |
+|         4 | david |
+|         5 | jacky |
++-----------+-------+
+5 rows in set (0.00 sec)
+
+mysql> select * from committees;
++---------------+-------+
+| committees_id | name  |
++---------------+-------+
+|             1 | john  |
+|             2 | mary  |
+|             3 | jacky |
+|             4 | joe   |
++---------------+-------+
+4 rows in set (0.00 sec)
+
+mysql> select m.member_id,m.name as member ,c.committe_id,c.name as committee from members m inner join
+    -> committes c on c.name=m.name;
+ERROR 1146 (42S02): Table 'joindb.committes' doesn't exist
+mysql> select m.member_id,m.name as member ,c.committee_id,c.name as committees from members m inner join
+    -> committees c on c.name=m.name;
+ERROR 1054 (42S22): Unknown column 'c.committee_id' in 'field list'
+mysql> select m.member_id,m.name as member ,c.committees_id,c.name as committees from members m inner join
+    -> committees c on c.name=m.name;
++-----------+--------+---------------+------------+
+| member_id | member | committees_id | committees |
++-----------+--------+---------------+------------+
+|         1 | john   |             1 | john       |
+|         3 | mary   |             2 | mary       |
+|         5 | jacky  |             3 | jacky      |
++-----------+--------+---------------+------------+
+3 rows in set (0.00 sec)
+
+mysql> select
+    -> m.member_id,
+    -> m.name as member,
+    -> c.committees_id,
+    -> c.name as committee from members m inner join committees c using(name);
++-----------+--------+---------------+-----------+
+| member_id | member | committees_id | committee |
++-----------+--------+---------------+-----------+
+|         1 | john   |             1 | john      |
+|         3 | mary   |             2 | mary      |
+|         5 | jacky  |             3 | jacky     |
++-----------+--------+---------------+-----------+
+3 rows in set (0.00 sec)
+
+mysql> select
+    -> m.member_id,
+    -> m.name as member,
+    -> c.committe_id,
+    -> c.name as committee
+    -> from
+    -> members m left join committees c using(name);
+ERROR 1054 (42S22): Unknown column 'c.committe_id' in 'field list'
+mysql> select
+    -> m.member_id,
+    -> c.committee_id,
+    -> c.name as committee
+    -> from
+    -> members m left join committees c using(name);
+ERROR 1054 (42S22): Unknown column 'c.committee_id' in 'field list'
+mysql> select
+    -> m.member_id,
+    -> c.committees_id,
+    -> c.name as committee
+    -> from
+    -> members m left join committees c using(name);
++-----------+---------------+-----------+
+| member_id | committees_id | committee |
++-----------+---------------+-----------+
+|         1 |             1 | john      |
+|         2 |          NULL | NULL      |
+|         3 |             2 | mary      |
+|         4 |          NULL | NULL      |
+|         5 |             3 | jacky     |
++-----------+---------------+-----------+
+5 rows in set (0.00 sec)
+
+mysql> select
+    -> m.member_id,
+    -> m.name as member,
+    -> c.committees_id,
+    -> c.name as committee
+    -> from members m left join comittees c using(name)
+    -> ^C
+mysql> select
+    -> m.member_id,
+    -> m.name as member,
+    -> c.committees_id,
+    -> c.name as committee
+    -> from members m left join committees c using(name)
+    -> where c.committees_id is null;
++-----------+--------+---------------+-----------+
+| member_id | member | committees_id | committee |
++-----------+--------+---------------+-----------+
+|         2 | jane   |          NULL | NULL      |
+|         4 | david  |          NULL | NULL      |
++-----------+--------+---------------+-----------+
+2 rows in set (0.00 sec)
+
+mysql> select
+    -> m.member_id,
+    -> m.name as member,
+    -> c.name as committee
+    -> ^C
+mysql>
+mysql> select
+    -> m.member_id,
+    -> m.name as member,
+    -> c.committees_id,
+    -> c.name as committee
+    -> from
+    -> members m right join committees c on c.name=m.name;
++-----------+--------+---------------+-----------+
+| member_id | member | committees_id | committee |
++-----------+--------+---------------+-----------+
+|         1 | john   |             1 | john      |
+|         3 | mary   |             2 | mary      |
+|         5 | jacky  |             3 | jacky     |
+|      NULL | NULL   |             4 | joe       |
++-----------+--------+---------------+-----------+
+4 rows in set (0.01 sec)
+
+mysql> select
+    -> m.member_id,
+    -> m.name as member,
+    -> c.committees_id,
+    -> c.name as committee
+    -> from
+    -> members m
+    -> right join  committees c using(name);
++-----------+--------+---------------+-----------+
+| member_id | member | committees_id | committee |
++-----------+--------+---------------+-----------+
+|         1 | john   |             1 | john      |
+|         3 | mary   |             2 | mary      |
+|         5 | jacky  |             3 | jacky     |
+|      NULL | NULL   |             4 | joe       |
++-----------+--------+---------------+-----------+
+4 rows in set (0.00 sec)
+
+mysql> select
+    -> m.member_id,
+    -> m.name as member,
+    -> c.committees_id,
+    -> c.name as committee
+    -> from memebers m
+    -> right join committees c using(n^C
+mysql>
+mysql> select
+    -> m.member_id,
+    -> m.name as member,
+    -> c.committees_id,
+    -> c.name as committee
+    -> from members m
+    -> right join  committees c using(name)
+    -> where m.member_id is null;
++-----------+--------+---------------+-----------+
+| member_id | member | committees_id | committee |
++-----------+--------+---------------+-----------+
+|      NULL | NULL   |             4 | joe       |
++-----------+--------+---------------+-----------+
+1 row in set (0.00 sec)
+
+mysql> select
+    -> m.member_id,
+    -> m.name as member,
+    -> c.committees_id,
+    -> c.name as committee
+    -> from  members m cross join committees c;
++-----------+--------+---------------+-----------+
+| member_id | member | committees_id | committee |
++-----------+--------+---------------+-----------+
+|         1 | john   |             4 | joe       |
+|         1 | john   |             3 | jacky     |
+|         1 | john   |             2 | mary      |
+|         1 | john   |             1 | john      |
+|         2 | jane   |             4 | joe       |
+|         2 | jane   |             3 | jacky     |
+|         2 | jane   |             2 | mary      |
+|         2 | jane   |             1 | john      |
+|         3 | mary   |             4 | joe       |
+|         3 | mary   |             3 | jacky     |
+|         3 | mary   |             2 | mary      |
+|         3 | mary   |             1 | john      |
+|         4 | david  |             4 | joe       |
+|         4 | david  |             3 | jacky     |
+|         4 | david  |             2 | mary      |
+|         4 | david  |             1 | john      |
+|         5 | jacky  |             4 | joe       |
+|         5 | jacky  |             3 | jacky     |
+|         5 | jacky  |             2 | mary      |
+|         5 | jacky  |             1 | john      |
++-----------+--------+---------------+-----------+
+20 rows in set (0.00 sec)
+
+mysql>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
